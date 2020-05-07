@@ -1,5 +1,6 @@
 #!/bin/bash
-servers=$(cat server-list.txt | awk -F, 'NR>1')
+servers=$(cat server-list.csv | awk -F, 'NR>1')
+
 for i in ${servers[@]}; do
   # Variables
   region=$(echo $i | cut -d , -f 1)
@@ -9,6 +10,8 @@ for i in ${servers[@]}; do
   subnetId=$(echo $i | cut -d , -f 5)
   privateIP=$(echo $i | cut -d , -f 6)
   securityGroupId=$(echo $i | cut -d , -f 7)
+  rootVolumeSize=$(echo $i | cut -d , -f 8)
+  dataVolumeSize=$(echo $i | cut -d , -f 9)
   
   # Create EC2 instances
   aws ec2 run-instances --region $region \
@@ -19,7 +22,7 @@ for i in ${servers[@]}; do
     --subnet-id $subnetId \
     --private-ip-address $privateIP \
     --security-group-ids $securityGroupId \
-    --block-device-mappings '[{"DeviceName":"/dev/xvda","Ebs":{"VolumeSize":10,"DeleteOnTermination":true,"VolumeType": "gp2"},"DeviceName":"/dev/xvdf","Ebs":{"VolumeSize":20,"DeleteOnTermination":true,"VolumeType": "gp2"}}]' \
+    --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":'$rootVolumeSize',"DeleteOnTermination":true,"VolumeType": "gp2"},"DeviceName":"/dev/xvdf","Ebs":{"VolumeSize":'$dataVolumeSize',"DeleteOnTermination":true,"VolumeType": "gp2"}}]' \
     --iam-instance-profile Name="EC2-Role" \
     --user-data file://init.sh \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${hostName}},{Key=env,Value=dev}]"
