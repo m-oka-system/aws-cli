@@ -14,7 +14,7 @@ for i in ${servers[@]}; do
   rootVolumeSize=$(echo $i | cut -d , -f 9)
   dataVolumeSize=$(echo $i | cut -d , -f 10)
   iamRole=$(echo $i | cut -d , -f 11)
-  test $OS == "Linux" && userData="init-linux.sh" || userData="init-windows.sh"
+  test $OS == "Linux" && userData="init-linux.sh" || userData="init-windows.ps1"
   
   # Create EC2 instances
   aws ec2 run-instances --region $region \
@@ -25,8 +25,10 @@ for i in ${servers[@]}; do
     --subnet-id $subnetId \
     --private-ip-address $privateIP \
     --security-group-ids $securityGroupId \
-    --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":'$rootVolumeSize',"DeleteOnTermination":true,"VolumeType": "gp2"},"DeviceName":"/dev/xvdf","Ebs":{"VolumeSize":'$dataVolumeSize',"DeleteOnTermination":true,"VolumeType": "gp2"}}]' \
+    --block-device-mappings file://$hostName.json \
     --iam-instance-profile Name=$iamRole \
     --user-data file://$userData \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${hostName}},{Key=env,Value=dev}]"
 done
+
+# '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":'$rootVolumeSize',"DeleteOnTermination":true,"VolumeType": "gp2"},"DeviceName":"/dev/xvdf","Ebs":{"VolumeSize":'$dataVolumeSize',"DeleteOnTermination":true,"VolumeType": "gp2"}}]' \

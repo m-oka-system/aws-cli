@@ -1,0 +1,42 @@
+[
+  {
+    "DeviceName": "/dev/sda1",
+    "Ebs": {
+      "DeleteOnTermination": true,
+      "VolumeSize": 30,
+      "VolumeType": "gp2"
+    }
+  },
+  {
+    "DeviceName": "/dev/xvdf",
+    "Ebs": {
+      "DeleteOnTermination": true,
+      "VolumeSize": 10,
+      "VolumeType": "gp2"
+    }
+  },
+  {
+    "DeviceName": "/dev/xvdg",
+    "Ebs": {
+      "DeleteOnTermination": true,
+      "VolumeSize": 15,
+      "VolumeType": "gp2"
+    }
+  },
+  {
+    "DeviceName": "/dev/xvdh",
+    "Ebs": {
+      "DeleteOnTermination": true,
+      "VolumeSize": 20,
+      "VolumeType": "gp2"
+    }
+  },
+  {
+    "DeviceName": "/dev/xvdi",
+    "Ebs": {
+      "DeleteOnTermination": true,
+      "VolumeSize": 25,
+      "VolumeType": "gp2"
+    }
+  }
+]
