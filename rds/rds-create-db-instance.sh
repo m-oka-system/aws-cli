@@ -44,22 +44,42 @@ for i in ${servers[@]}; do
   aws rds create-db-instance \
     --db-instance-identifier $dbInstanceIdentifier \
     --db-instance-class $dbInstanceClass \
+    --availability-zone $region"a" \
+    --no-multi-az \
     --db-subnet-group-name $dbSubnetGroupName \
     --db-parameter-group-name $dbParameterGroupName \
     --option-group-name $optionGroupName\
     --vpc-security-group-ids $vpcSecurityGroups \
+    --storage-type gp2 \
     --allocated-storage $allocatedStorage \
+    --storage-encrypted \
     --engine MySQL \
     --engine-version 5.7 \
+    --port 3306 \
     --db-name $dbName \
     --master-username $dbUserName \
     --master-user-password $dbUserPassword \
     --no-publicly-accessible \
     --backup-retention-period 2 \
     --preferred-backup-window "19:00-20:00" \
-    --preferred-maintenance-window "Sat:20:00-Sat:21:00" \
+    --enable-performance-insights \
+    --performance-insights-retention-period 7 \
+    --monitoring-interval 60 \
+    --enable-cloudwatch-logs-exports ["error","general","audit","slowquery"]
     --auto-minor-version-upgrade \
-    --availability-zone $region"a" \
-    --no-multi-az \
-    --deletion-protection
+    --preferred-maintenance-window "Sat:20:00-Sat:21:00" \
+    --deletion-protection \
+    --tags Key=Name,Value=$dbInstanceIdentifier Key=evn,Value=dev \
+    --copy-tags-to-snapshot
+
+    # Create event subscription
+    snsTopicArn=""
+    aws rds create-event-subscription \
+      --subscription-name $dbInstanceIdentifier"-alert"
+      --sns-topic-arn $snsTopicArn
+      --source-type db-instance
+      --event-categories '["failover","notification","maintenance","failure"]'
+      --source-ids $dbInstanceIdentifier
+      --enabled 
+      --tags Key=Name,Value=$dbInstanceIdentifier Key=evn,Value=dev
 done
