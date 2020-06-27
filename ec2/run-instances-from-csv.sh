@@ -11,9 +11,7 @@ for i in ${servers[@]}; do
   subnetId=$(echo $i | cut -d , -f 6)
   privateIP=$(echo $i | cut -d , -f 7)
   securityGroupId=$(echo $i | cut -d , -f 8)
-  rootVolumeSize=$(echo $i | cut -d , -f 9)
-  dataVolumeSize=$(echo $i | cut -d , -f 10)
-  iamRole=$(echo $i | cut -d , -f 11)
+  iamRole=$(echo $i | cut -d , -f 9)
   test $OS == "Linux" && userData="init-linux.sh" || userData="init-windows.ps1"
   
   # Create EC2 instances
