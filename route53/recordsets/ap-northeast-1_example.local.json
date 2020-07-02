@@ -1,0 +1,17 @@
+{
+  "Changes" : [
+    {
+      "Action" : "UPSERT",
+      "ResourceRecordSet" : {
+        "Name" : "web01.example.local",
+        "Type" : "A",
+        "TTL" : 300,
+        "ResourceRecords" : [
+          {
+            "Value": "10.0.11.10"
+          }
+        ]
+      }
+    }
+  ]
+}
