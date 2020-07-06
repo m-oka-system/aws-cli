@@ -1,0 +1,18 @@
+# install efs utils
+sudo yum install -y git       # ソースコード取得用
+sudo yum install -y rpm-build # RPM パッケージ作成用
+git clone https://github.com/aws/efs-utils
+cd efs-utils
+make rpm # RPM パッケージをビルド
+ls build/amazon-efs-utils*rpm # パッケージの確認
+sudo yum -y install build/amazon-efs-utils*rpm # RPM パッケージをインストール
+
+# EFSマウント
+# SGで2049番ポートを許可しておくこと
+sudo mkdir /mnt/efs
+df -h
+sudo mount -t efs fs-xxxxxxxx:/ /mnt/efs
+
+# 自動マウント
+sudo cp /etc/fstab /etc/fstab.org
+echo "fs-xxxxxxxx:/ /mnt/efs efs _netdev,tls,iam 0 0" >> /etc/fstab

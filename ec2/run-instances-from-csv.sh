@@ -13,7 +13,16 @@ for i in ${servers[@]}; do
   securityGroupId=$(echo $i | cut -d , -f 8)
   iamRole=$(echo $i | cut -d , -f 9)
   test $OS == "Linux" && userData="init-linux.sh" || userData="init-windows.ps1"
-  
+
+  # if [ $hostName = "WEB01" ]; then
+  #   userData="init-linux-efs.sh" 
+  # else
+  #   case $OS in
+  #     Linux) userData="init-linux.sh" ;;
+  #     Windows) userData="init-windows.ps1" ;;
+  #   esac
+  # fi
+
   # Create EC2 instances
   aws ec2 run-instances --region $region \
     --image-id $amiId \
