@@ -1,0 +1,2 @@
+region,vaultName,efsName,subnetId1,subnetId2,privateIp1,privateIp12,securityGroupId
+ap-northeast-1,jpn-efs-backup-vault,EFS01,subnet-0d671f9ba695c6efe,subnet-04a5a9301c31ec863,10.0.11.101,10.0.12.101,sg-042eee7e73370182d

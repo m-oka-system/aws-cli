@@ -1,5 +1,5 @@
 #!/bin/bash
-servers=$(cat server-list.csv | awk -F, 'NR>1')
+servers=$(cat server-list.csv | sed 1d)
 
 for i in ${servers[@]}; do
   # Variables
@@ -15,7 +15,7 @@ for i in ${servers[@]}; do
   test $OS == "Linux" && userData="init-linux.sh" || userData="init-windows.ps1"
 
   # if [ $hostName = "WEB01" ]; then
-  #   userData="init-linux-efs.sh" 
+  #   userData="init-linux-efs.sh"
   # else
   #   case $OS in
   #     Linux) userData="init-linux.sh" ;;

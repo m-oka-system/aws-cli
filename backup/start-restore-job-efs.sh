@@ -1,44 +1,49 @@
 #!/bin/bash
 set -e
 
-region="ap-northeast-1"
-efsId="fs-6a3f3d4b"
-vaultName="jpn-efs-backup-vault"
-latestRecoveryPoint=$(aws backup list-recovery-points-by-backup-vault --region $region --backup-vault-name $vaultName --query "sort_by(RecoveryPoints, &CreationDate)[-1].RecoveryPointArn" --output text)
+# Common Variables
+servers=$(cat efs-list.csv | sed 1d)
 iamRoleArn="arn:aws:iam::$ACCOUNT_ID:role/service-role/AWSBackupDefaultServiceRole"
-latestRecoveryPointTags=$(aws backup list-tags --resource-arn $latestRecoveryPoint)
-token=$(uuidgen)
+# token=$(uuidgen)
+token="637d0d03-d839-4961-b970-66dfc8b0c057"
+maxSleepSecs=1
+sleepInterval="1m"
 
-# Restore EFS from AWS Backup recovery points
-restoreJobId=$(aws backup start-restore-job --region $region \
-  --recovery-point-arn $latestRecoveryPoint \
-  --iam-role-arn $iamRoleArn\
-  --resource-type EFS \
-  --metadata file-system-id=$efsId,newFileSystem=true,CreationToken=$token,Encrypted=false,PerformanceMode=generalPurpose \
-  --output text)
+# Import functions
+cwd="$(cd "$(dirname "$0")" && pwd)"
+. ./lib/create-efs-from-backup.sh
+. ./lib/wait-efs-restore-complete.sh
 
-# Wait until the EFS restore is complete
-count=1
-while [ $status != "COMPLETED" ]
-do
-  echo "$(date +%Y-%m-%d_%H-%M-%S):EFSのリストア完了まで待機します。Count:$count"
-  sleep 1m
-  status=$(aws backup describe-restore-job --region $region --restore-job-id $restoreJobId --query Status --output text)
-  if [ $count -gt 60 ]; then
-    echo "$(date +%Y-%m-%d_%H-%M-%S):EFSのリストアがタイムアウトしました。処理を終了します。"
-    exit 1
-  fi
-  i=$((i + 1))
+echo "${servers[@]}"
+read -p "EFSのリストアを開始します。よろしいですか？ (y/N): " yn
+case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
+
+for i in ${servers[@]}; do
+  region=$(echo $i | cut -d , -f 1)
+  vaultName=$(echo $i | cut -d , -f 2)
+  efsName=$(echo $i | cut -d , -f 3)
+
+  subnetId1=$(echo $i | cut -d , -f 4)
+  subnetId2=$(echo $i | cut -d , -f 5)
+  privateIp1=$(echo $i | cut -d , -f 6)
+  privateIp2=$(echo $i | cut -d , -f 7)
+  securityGroupId=$(echo $i | cut -d , -f 8)
+
+
+  create-efs-from-backup
+  wait-efs-restore-complete $restoreJobId &
 done
-echo "$(date +%Y-%m-%d_%H-%M-%S):EFSのリストアが完了しました。"
+
+wait
+read -p "待機します..."
 
 # Creates a mount target for a created EFS.
 # createdEfsId=$(aws efs describe-file-systems --region $region --query "sort_by(FileSystems, &CreationTime)[-1].FileSystemId" --output text) && echo restoredEfsId
 createdEfsId=$(aws backup describe-restore-job --region $region --restore-job-id $restoreJobId --query CreatedResourceArn --output text | awk -F/ '{print $2}')
-createdEfsName="EFS01-restored"
-subnetIds=("subnet-05cee398d8071777b" "subnet-0253f67cb0e6f5068")
-efsIpAddresses=("10.0.11.200" "10.0.21.200")
-securityGroupId="sg-0d940172c4a4c6585"
+createdEfsName=${efsName}-restored
+subnetIds=($subnetId1 $subnetId2)
+efsIpAddresses=($privateIp1 $privateIp2)
+latestRecoveryPointTags=$(aws backup list-tags --resource-arn $latestRecoveryPoint)
 
 for ((i=0; i < ${#subnetIds[*]}; i++)); do
   NetworkInterfaceId=$(aws efs create-mount-target --region $region --file-system-id $createdEfsId --subnet-id ${subnetIds[$i]} --ip-address ${efsIpAddresses[$i]} --security-groups $securityGroupId)
