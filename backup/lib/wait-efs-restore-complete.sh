@@ -4,17 +4,17 @@ set -e
 
 function wait-efs-restore-complete () {
   # Wait until the EFS restore is complete
-  count=1
+  local count=1
+  local status=
   while [ "$status" != "COMPLETED" ]
   do
-    echo "$(date +%Y-%m-%d_%H-%M-%S):EFSのリストア完了まで待機します。Count:$count"
     sleep $sleepInterval
     status=$(aws backup describe-restore-job --region $region --restore-job-id $1 --query Status --output text)
     if [ $count -ge $maxSleepSecs ]; then
-      echo "$(date +%Y-%m-%d_%H-%M-%S):EFSのリストアがタイムアウトしました。処理を終了します。"
-      break
+      # echo "$(date +%Y-%m-%d_%H-%M-%S):${efsName} のリストアがタイムアウトしました。"
+      return 1
     fi
-    i=$((i + 1))
+    count=$((count + 1))
   done
 }
 

@@ -4,7 +4,7 @@ set -e
 
 function create-efs-from-backup () {
 
-efsId=$(aws efs describe-file-systems --region $region --query "FileSystems[?Name==\`$efsName\`].FileSystemId" --output text)
+efsId=$(aws efs describe-file-systems --region $sourceRegion --query "FileSystems[?Name==\`$efsName\`].FileSystemId" --output text)
 if [ -z "$efsId" ]; then
   echo "EFSIDの取得に失敗しました。処理を終了します。"
 fi
