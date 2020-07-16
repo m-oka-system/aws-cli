@@ -49,10 +49,10 @@ for i in ${servers[@]}; do
 
   # Get tags of latest recovery point
   echo "---Copy tags to EFS and ENI from latest recovery point"
-  latestRecoveryPointTags=($(aws backup list-tags --region $region --resource-arn $latestRecoveryPoint --output yaml | sed -e's/ //g' -e 1d))
-  for ((k=0; k < ${#latestRecoveryPointTags[*]}; k++)); do
-    key=$(echo ${latestRecoveryPointTags[$k]} | cut -d : -f 1)
-    value=$(echo ${latestRecoveryPointTags[$k]} | cut -d : -f 2)
+  latestRecoveryPointTags=($(aws backup list-tags --region $region --resource-arn $latestRecoveryPoint --query Tags --output yaml | sed -e's/ //g'))
+  for k in ${latestRecoveryPointTags[@]}; do
+    key=$(echo $k | cut -d : -f 1)
+    value=$(echo $k | cut -d : -f 2)
     aws efs tag-resource --region $region --resource-id $createdEfsId --tags Key=$key,Value=$value
     aws ec2 create-tags --region $region --resources ${NetworkInterfaceIds[@]} --tags Key=$key,Value=$value
   done
