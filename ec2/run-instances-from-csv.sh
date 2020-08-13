@@ -1,5 +1,5 @@
 #!/bin/bash
-servers=$(cat server-list.csv | sed 1d)
+servers=$(cat server-list.csv | sed 1d | sed '/^#/d')
 
 for i in ${servers[@]}; do
   # Variables
@@ -14,15 +14,6 @@ for i in ${servers[@]}; do
   iamRole=$(echo $i | cut -d , -f 9)
   test $OS == "Linux" && userData="init-linux.sh" || userData="init-windows.ps1"
 
-  # if [ $hostName = "WEB01" ]; then
-  #   userData="init-linux-efs.sh"
-  # else
-  #   case $OS in
-  #     Linux) userData="init-linux.sh" ;;
-  #     Windows) userData="init-windows.ps1" ;;
-  #   esac
-  # fi
-
   # Create EC2 instances
   aws ec2 run-instances --region $region \
     --image-id $amiId \
@@ -36,5 +27,5 @@ for i in ${servers[@]}; do
     --iam-instance-profile Name=$iamRole \
     --user-data file://userdata/$userData \
     --disable-api-termination \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${hostName}},{Key=env,Value=dev}]"
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${hostName}},{Key=env,Value=dev}]" 2>&1 1>/dev/null
 done

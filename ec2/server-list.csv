@@ -1,2 +1,5 @@
 region,amiId,OS,hostName,instanceType,subnetId,privateIp,securityGroupId,iamRole
-ap-northeast-1,ami-098dd15c06cdc8833,Linux,WEB01,t2.micro,subnet-05cee398d8071777b,10.0.11.10,sg-0d940172c4a4c6585,EC2-Role
+#ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV01,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.10,sg-042eee7e73370182d,WINSV01_IAMROLE
+#ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV02,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.11,sg-042eee7e73370182d,WINSV02_IAMROLE
+#ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV03,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.12,sg-042eee7e73370182d,WINSV03_IAMROLE
+ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV04,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.13,sg-042eee7e73370182d,WINSV04_IAMROLE

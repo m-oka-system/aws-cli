@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # Variables
-servers=("WEB01" "WEB02")
+servers="$@"
+
+if [ "$#" -eq 0 ]; then
+  echo  "1つ以上の引数を指定してください。"
+  exit 1
+fi
+
 for i in ${servers[@]}; do
   hostName=$i
   InstanceId=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$hostName" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].InstanceId" --output text)
