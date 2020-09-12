@@ -3,7 +3,7 @@
 # Variables
 region="ap-northeast-1"
 domainName="example.local"
-vpcId="vpc-08f177c792bb6c5f3"
+vpcId="vpc-073fceccc471f7e75"
 
 zoneId=$(aws route53 create-hosted-zone \
   --name $domainName \
