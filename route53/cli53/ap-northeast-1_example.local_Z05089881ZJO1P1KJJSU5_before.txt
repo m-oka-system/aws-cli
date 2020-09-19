@@ -1,8 +1,0 @@
-$ORIGIN example.local.
-@	900	IN	SOA	ns-1536.awsdns-00.co.uk. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
-@	172800	IN	NS	ns-1536.awsdns-00.co.uk.
-@	172800	IN	NS	ns-0.awsdns-00.com.
-@	172800	IN	NS	ns-1024.awsdns-00.org.
-@	172800	IN	NS	ns-512.awsdns-00.net.
-web01	300	IN	A	10.0.11.11
-web02	300	IN	A	10.0.11.12
