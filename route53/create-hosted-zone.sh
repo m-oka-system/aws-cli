@@ -21,3 +21,4 @@ aws route53 change-resource-record-sets \
   --hosted-zone-id "$ZONE_ID" \
   --change-batch file://recordsets/${AWS_DEFAULT_REGION}_${DOMAIN_NAME}.json > /dev/null 2>&1
 echo "リソースレコードを作成しました"
+echo "$ZONE_ID"
