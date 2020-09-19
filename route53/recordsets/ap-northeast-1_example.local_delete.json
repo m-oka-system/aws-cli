@@ -1,17 +1,30 @@
 {
-  "Changes" : [
-    {
-      "Action" : "DELETE",
-      "ResourceRecordSet" : {
-        "Name" : "web01.example.local",
-        "Type" : "A",
-        "TTL" : 300,
-        "ResourceRecords" : [
-          {
-            "Value": "10.0.11.10"
-          }
-        ]
-      }
-    }
-  ]
+    "Changes": [
+        {
+            "Action": "DELETE",
+            "ResourceRecordSet": {
+                "Name": "web01.example.local",
+                "Type": "A",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "10.0.11.11"
+                    }
+                ]
+            }
+        },
+        {
+            "Action": "DELETE",
+            "ResourceRecordSet": {
+                "Name": "web02.example.local",
+                "Type": "A",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "10.0.11.12"
+                    }
+                ]
+            }
+        }
+    ]
 }

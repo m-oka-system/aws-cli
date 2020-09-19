@@ -1,25 +1,27 @@
 #!/bin/bash
+set -euo pipefail
 
-# Variables
-region="ap-northeast-1"
-vpcId="vpc-08f177c792bb6c5f3"
-domainNames=("example.local" "11.0.10")
+# 変数
+export AWS_DEFAULT_REGION="ap-northeast-1"
+DOMAIN_NAMES=("example.local")
+VPC_ID="vpc-08ad5c00c7cdece78"
 
-# Main
-for name in ${domainNames[@]}; do echo $name; done
+# エクスポート先を定義
+mkdir -p export
+EXPORT_DIR="./export"
+
+# 確認メッセージ
+for name in ${DOMAIN_NAMES[@]}; do echo $name; done
 read -p "上記ホストゾーンを取得します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
-echo "---start---"
+# メイン処理
+for ((i=0; i < ${#DOMAIN_NAMES[*]}; i++)); do
+  # ZoneIDを取得
+  zoneId=$(aws route53 list-hosted-zones-by-vpc --vpc-id $VPC_ID --vpc-region $AWS_DEFAULT_REGION --query "HostedZoneSummaries[?Name==\`${DOMAIN_NAMES[$i]}.\`].HostedZoneId" --output text)
 
-for ((i=0; i < ${#domainNames[*]}; i++)); do
-  # Get hosted zone id
-  echo "Get hosted zone id(${domainNames[$i]})"
-  zoneId=$(aws route53 list-hosted-zones-by-vpc --vpc-id $vpcId --vpc-region $region --query "HostedZoneSummaries[?Name==\`${domainNames[$i]}.\`].HostedZoneId" --output text)
-
-  # Export resource record sets
-  echo "Export resource record sets(${domainNames[$i]})"
-  aws route53 list-resource-record-sets --hosted-zone-id $zoneId > ${region}_${domainNames[$i]}.json
+  # リソースレコードをエクスポート
+  echo "${DOMAIN_NAMES[$i]} のリソースレコードをエクスポートします。"
+  aws route53 list-resource-record-sets --hosted-zone-id $zoneId > ${EXPORT_DIR}/${AWS_DEFAULT_REGION}_${DOMAIN_NAMES[$i]}.json
+  echo "${DOMAIN_NAMES[$i]} のリソースレコードをエクスポートしました。"
 done
-
-echo "---finished---"
