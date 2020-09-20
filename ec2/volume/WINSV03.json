@@ -8,7 +8,7 @@
     }
   },
   {
-    "DeviceName": "xvdb",
+    "DeviceName": "xvdf",
     "Ebs": {
       "DeleteOnTermination": true,
       "VolumeSize": 20,
@@ -16,7 +16,7 @@
     }
   },
   {
-    "DeviceName": "xvdf",
+    "DeviceName": "xvdg",
     "Ebs": {
       "DeleteOnTermination": true,
       "VolumeSize": 10,

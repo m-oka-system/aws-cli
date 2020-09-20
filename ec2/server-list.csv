@@ -1,5 +1,5 @@
-region,amiId,OS,hostName,instanceType,subnetId,privateIp,securityGroupId,iamRole
-#ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV01,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.10,sg-042eee7e73370182d,WINSV01_IAMROLE
-#ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV02,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.11,sg-042eee7e73370182d,WINSV02_IAMROLE
-#ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV03,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.12,sg-042eee7e73370182d,WINSV03_IAMROLE
-ap-northeast-1,ami-06a23b8728d57155b,Windows,WINSV04,t2.medium,subnet-0d671f9ba695c6efe,10.0.11.13,sg-042eee7e73370182d,WINSV04_IAMROLE
+AmiId,HostName,Env,OS,InstanceType,PrivateIp,SubnetId,SecurityGroupId
+ami-04a12c0fbaeac005e,RHEL01,Dev,RHEL,t3.micro,10.0.11.11,subnet-07ad56717f7d6df74,sg-01cecaf018917dbe7
+#ami-0db8eed5fcd04986b,WINSV02,Dev,Windows,t3.micro,10.0.11.12,subnet-07ad56717f7d6df74,sg-01cecaf018917dbe7
+#ami-06a23b8728d57155b,WINSV03,Dev,Windows,t3.medium,10.0.11.13,subnet-07ad56717f7d6df74,sg-01cecaf018917dbe7
+#ami-06a23b8728d57155b,WINSV04,Dev,Windows,t3.micro,10.0.11.14,subnet-07ad56717f7d6df74,sg-01cecaf018917dbe7

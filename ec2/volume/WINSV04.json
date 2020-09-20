@@ -8,7 +8,7 @@
     }
   },
   {
-    "DeviceName": "xvdb",
+    "DeviceName": "xvdf",
     "Ebs": {
       "DeleteOnTermination": true,
       "VolumeSize": 8,
