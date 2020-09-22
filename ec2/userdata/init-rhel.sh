@@ -32,6 +32,17 @@ echo "preserve_hostname: true" >> /etc/cloud/cloud.cfg
 # Disable SELinux
 sed -i".org" -e 's/^SELINUX=enforcing$/SELINUX=disabled/' /etc/selinux/config
 
+# Add user
+USER_NAME="aws_admin"
+useradd -m $USER_NAME
+echo "${USER_NAME}:P@ssw0rd" | chpasswd
+
+# Allow password authentication
+sed -i".org" -e 's/^PasswordAuthentication no$/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Add sudo permission(Edit /etc/sudoers)
+echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" | EDITOR='tee -a' visudo >/dev/null
+
 # Add tags to ebs volume
 aws ec2 create-tags --resources $DATA_VOLUME_IDS --region $AWS_REGION --tags Key=Name,Value=${HOST_NAME}_DATA
 aws ec2 create-tags --resources $ROOT_VOLUME_IDS --region $AWS_REGION --tags Key=Name,Value=${HOST_NAME}_ROOT
