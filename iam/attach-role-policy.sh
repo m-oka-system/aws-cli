@@ -13,7 +13,7 @@ IAMROLE_PREFIX="IAMROLE_"
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 POLICY_NAME="IAMPOLICY_EC2_RUN_USERDATA"
 POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/${POLICY_NAME}"
-SSM_POLICY_ARN="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+SSM_POLICY_ARN="arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 
 # メイン処理
 for server in "${SERVER_ARRAY[@]}"; do
