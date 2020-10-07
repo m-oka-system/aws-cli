@@ -1,0 +1,3 @@
+region,efsName,vaultName,subnetId1,subnetId2,privateIp1,privateIp12,securityGroupId
+ap-southeast-1,EFS01,sgp-efs-backup-vault,subnet-0adb80099bbb7022d,subnet-050968bd48ff4ae54,10.1.11.101,10.1.12.101,sg-001fd05d72cd4d13d
+#ap-southeast-1,EFS02,sgp-efs-backup-vault,subnet-0adb80099bbb7022d,subnet-050968bd48ff4ae54,10.1.11.102,10.1.12.102,sg-001fd05d72cd4d13d
