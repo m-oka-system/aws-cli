@@ -5,14 +5,13 @@ set -euo pipefail
 SERVER_FILE="efs-list.csv"
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 IAMROLE_ARN="arn:aws:iam::$ACCOUNT_ID:role/service-role/AWSBackupDefaultServiceRole"
-SOURCE_REGION="ap-northeast-1"
 TOKEN=$(uuidgen)
 
 # サーバ一覧のファイルを1行ずつ読み込んで配列へ格納
 mapfile -t SERVER_ARRAY < <(sed 1d $SERVER_FILE | sed '/^#/d')
 
 echo "${SERVER_ARRAY[@]}"
-read -p "EFSのリストアを開始します。よろしいですか？ (y/N): " yn
+read -rp "EFSのリストアを開始します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
 # リストア済みEFSリストを初期化
@@ -22,16 +21,11 @@ case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 for i in "${SERVER_ARRAY[@]}"; do
   # Variables
   REGION=$(echo $i | cut -d , -f 1)
-  EFS_NAME=$(echo $i | cut -d , -f 2)
-  VAULT_NAME=$(echo $i | cut -d , -f 3)
+  VAULT_NAME=$(echo $i | cut -d , -f 2)
+  EFS_NAME=$(echo $i | cut -d , -f 3)
+  SOURCE_EFS_ID=$(echo $i | cut -d , -f 4)
 
   echo "$EFS_NAME のリストアを開始しました。"
-  # Get efs id from source region
-  SOURCE_EFS_ID=$(aws efs describe-file-systems --region $SOURCE_REGION --query "FileSystems[?Name==\`${EFS_NAME}\`].FileSystemId" --output text)
-  if [ x = x$SOURCE_EFS_ID ]; then
-    echo "EFSIDの取得に失敗しました。処理を終了します。"
-    exit 1
-  fi
 
   # AWSBackupの最新の復旧ポイントからEFSをリストア
   LATEST_RECOVERY_POINT=$(aws backup list-recovery-points-by-backup-vault --region $REGION --backup-vault-name $VAULT_NAME --query "sort_by(RecoveryPoints, &CreationDate)[?contains(ResourceArn,\`$SOURCE_EFS_ID\`)]|[-1].RecoveryPointArn" --output text)
@@ -41,7 +35,7 @@ for i in "${SERVER_ARRAY[@]}"; do
   fi
 
   echo "LatestRecoveryPointArn:${LATEST_RECOVERY_POINT}"
-  read -p "上記復旧ポイントからリストアします。よろしいですか？ (y/N): " yn
+  read -rp "上記復旧ポイントからリストアします。よろしいですか？ (y/N): " yn
   case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
   RESTORE_JOB_ID=$(aws backup start-restore-job --region $REGION \

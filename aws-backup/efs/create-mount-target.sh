@@ -10,7 +10,7 @@ mapfile -t SERVER_ARRAY < <(sed 1d $SERVER_FILE | sed '/^#/d')
 mapfile -t CREATED_EFS < <(cat $CREATED_EFS_FILE)
 
 echo "${SERVER_ARRAY[@]}"
-read -p "EFSにマウントターゲットを追加します。よろしいですか？ (y/N): " yn
+read -rp "EFSにマウントターゲットを追加します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
 # Main
@@ -18,12 +18,12 @@ n=0
 for i in "${SERVER_ARRAY[@]}"; do
   # Variables
   REGION=$(echo $i | cut -d , -f 1)
-  EFS_NAME=$(echo $i | cut -d , -f 2)
-  SUBNET_ID1=$(echo $i | cut -d , -f 4)
-  SUBNET_ID2=$(echo $i | cut -d , -f 5)
-  PRIVATE_IP1=$(echo $i | cut -d , -f 6)
-  PRIVATE_IP2=$(echo $i | cut -d , -f 7)
-  SECURITY_GROUP_ID=$(echo $i | cut -d , -f 8)
+  EFS_NAME=$(echo $i | cut -d , -f 3)
+  SUBNET_ID1=$(echo $i | cut -d , -f 5)
+  SUBNET_ID2=$(echo $i | cut -d , -f 6)
+  PRIVATE_IP1=$(echo $i | cut -d , -f 7)
+  PRIVATE_IP2=$(echo $i | cut -d , -f 8)
+  SECURITY_GROUP_ID=$(echo $i | cut -d , -f 9)
   LATEST_RECOVERY_POINT=$(echo ${CREATED_EFS[$n]} | cut -d , -f 2)
   RESTORE_JOB_ID=$(echo ${CREATED_EFS[$n]} | cut -d , -f 3)
   CREATED_EFS_NAME=${EFS_NAME}-restored
@@ -57,18 +57,24 @@ for i in "${SERVER_ARRAY[@]}"; do
   # 最新の復旧ポイントのタグを取得
   echo "---最新の復旧ポイントのタグをEFS、ENIにコピーします。"
   # LATEST_RECOVERY_POINT_TAGS=($(aws backup list-tags --region $REGION --resource-arn $LATEST_RECOVERY_POINT --query Tags --output yaml | sed -e's/ //g'))
-  mapfile -t LATEST_RECOVERY_POINT_TAGS < <(aws backup list-tags --region $REGION --resource-arn $LATEST_RECOVERY_POINT --query "Tags" --output yaml | sed -e 's/ //g')
-  for k in "${LATEST_RECOVERY_POINT_TAGS[@]}"; do
-    KEY=$(echo $k | cut -d : -f 1)
-    VALUE=$(echo $k | cut -d : -f 2)
-    aws efs tag-resource --region $REGION --resource-id $CREATED_EFS_ID --tags Key=$KEY,Value=$VALUE
-    aws ec2 create-tags --region $REGION --resources "${NETWORK_INTERFACE_IDS[@]}" --tags Key=$KEY,Value=$VALUE
-  done
+  # mapfile -t LATEST_RECOVERY_POINT_TAGS < <(aws backup list-tags --region $REGION --resource-arn $LATEST_RECOVERY_POINT --query "Tags" --output yaml | sed -e 's/ //g')
+  mapfile -t LATEST_RECOVERY_POINT_TAGS < <(aws backup list-tags --region $REGION --resource-arn $LATEST_RECOVERY_POINT --query "Tags" --output json | sed -e '1d' -e '$d' -e 's/ //g' -e 's/"//g' -e 's/,$//g') #json出力から1行目、最終行、スペース、ダブルクォーテーション、末尾のカンマを除外
 
-  # Nameタグを上書き
-  echo "---EFSとENIのNameタグを上書きします。"
-  aws efs tag-resource --region $REGION --resource-id $CREATED_EFS_ID --tags Key=Name,Value=$CREATED_EFS_NAME
-  aws ec2 create-tags --region $REGION --resources "${NETWORK_INTERFACE_IDS[@]}" --tags Key=Name,Value=${CREATED_EFS_NAME}_ENI
+  if [ ${#LATEST_RECOVERY_POINT_TAGS[*]} -eq 0 ]; then
+    echo "${EFS_NAME} の復旧ポイントにはタグが存在しません。処理をスキップします。"
+  else
+    for k in "${LATEST_RECOVERY_POINT_TAGS[@]}"; do
+      KEY=$(echo $k | cut -d : -f 1)
+      VALUE=$(echo $k | cut -d : -f 2)
+      aws efs tag-resource --region $REGION --resource-id $CREATED_EFS_ID --tags Key=$KEY,Value=$VALUE
+      aws ec2 create-tags --region $REGION --resources "${NETWORK_INTERFACE_IDS[@]}" --tags Key=$KEY,Value=$VALUE
+    done
+
+    # Nameタグを上書き
+    echo "---EFSとENIのNameタグを上書きします。"
+    aws efs tag-resource --region $REGION --resource-id $CREATED_EFS_ID --tags Key=Name,Value=$CREATED_EFS_NAME
+    aws ec2 create-tags --region $REGION --resources "${NETWORK_INTERFACE_IDS[@]}" --tags Key=Name,Value=${CREATED_EFS_NAME}_ENI
+  fi
 
   n=$((n + 1))
   echo "$EFS_NAME のマウントターゲット作成が終了しました。"
