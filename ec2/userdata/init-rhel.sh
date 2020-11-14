@@ -63,6 +63,9 @@ cd efs-utils
 make rpm
 sudo yum -y install build/amazon-efs-utils*rpm
 
+# Install bind-utils
+sudo yum install -y bind-utils
+
 # Install web server(nginx)
 sudo rpm -ivh http://nginx.org/packages/rhel/7/noarch/RPMS/nginx-release-rhel-7-0.el7.ngx.noarch.rpm
 sudo yum install -y nginx
