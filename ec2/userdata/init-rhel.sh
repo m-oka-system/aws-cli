@@ -55,6 +55,14 @@ sudo yum install -y https://s3.${AWS_REGION}.amazonaws.com/amazon-ssm-${AWS_REGI
 sudo systemctl enable amazon-ssm-agent
 sudo systemctl start amazon-ssm-agent
 
+# Install amazon-efs-utils
+sudo yum install -y git
+sudo yum install -y rpm-build
+git clone https://github.com/aws/efs-utils
+cd efs-utils
+make rpm
+sudo yum -y install build/amazon-efs-utils*rpm
+
 # Install web server(nginx)
 sudo rpm -ivh http://nginx.org/packages/rhel/7/noarch/RPMS/nginx-release-rhel-7-0.el7.ngx.noarch.rpm
 sudo yum install -y nginx
