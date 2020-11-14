@@ -61,7 +61,7 @@ for server in "${SERVER_ARRAY[@]}"; do
   aws ec2 create-tags --resources $VOLUME_IDS --tags Key=Name,Value=${HOST_NAME}_DATA
   aws ec2 create-tags --resources $ROOT_VOLUME_ID --tags Key=Name,Value=${HOST_NAME}_ROOT
   aws ec2 create-tags --resources $NETWORK_INTERFACE_IDS --tags Key=Name,Value=${HOST_NAME}_ENI
-  } > /dev/null 2>&1
+  } 2>&1 1>/dev/null
 
   echo "${HOST_NAME} の作成が終了しました。"
 done
