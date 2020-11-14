@@ -10,6 +10,7 @@ TENANCY="default" # "default"|"dedicated"|"host"
 mapfile -t SERVER_ARRAY < <(sed 1d $SERVER_FILE | sed '/^#/d')
 
 # 確認メッセージ
+echo "Region:${AWS_DEFAULT_REGION}"
 for array in "${SERVER_ARRAY[@]}"; do echo $array; done
 read -r -p "上記サーバを作成します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac

@@ -10,7 +10,8 @@ if [ "$#" -eq 0 ]; then
 fi
 
 # 確認メッセージ
-echo "${SERVER_ARRAY[@]}"
+echo "Region:${AWS_DEFAULT_REGION}"
+echo "HostName:${SERVER_ARRAY[*]}"
 read -r -p "上記サーバを削除します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
