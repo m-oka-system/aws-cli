@@ -8,7 +8,9 @@ AmiId,HostName,Env,OS,InstanceType,PrivateIp,SubnetId,SecurityGroupId
 #ami-0db8eed5fcd04986b,WINSV02,Dev,Windows,t3.micro,10.0.21.12,subnet-002e32ddce1eeda13,sg-0bb01f7e64e95643a
 #ami-06a23b8728d57155b,WINSV03,Dev,Windows,t3.medium,10.0.21.13,subnet-002e32ddce1eeda13,sg-0bb01f7e64e95643a
 #ami-06a23b8728d57155b,WINSV04,Dev,Windows,t3.micro,10.0.21.14,subnet-002e32ddce1eeda13,sg-0bb01f7e64e95643a
-ami-0b355f24363d9f357,RHEL7.7,Dev,RHEL,t3.micro,10.0.11.11,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
-ami-0dc185deadd3ac449,RHEL8.3,Dev,RHEL,t3.micro,10.0.11.12,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
-ami-0119d7d47f3b13adb,SUSE15,Dev,SUSE,t3.micro,10.0.11.13,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
-ami-04882bf72ff913721,SUSE12,Dev,SUSE,t3.micro,10.0.11.14,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
+#ami-0b355f24363d9f357,RHEL7.7,Dev,RHEL,t3.micro,10.0.11.11,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-0dc185deadd3ac449,RHEL8.3,Dev,RHEL,t3.micro,10.0.11.12,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-0119d7d47f3b13adb,SUSE15,Dev,SUSE,t3.micro,10.0.11.13,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-04882bf72ff913721,SUSE12,Dev,SUSE,t3.micro,10.0.11.14,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-034968955444c1fd9,AmazonLinux01,Dev,Amazon,t3.micro,10.0.11.15,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-034968955444c1fd9,AmazonLinux02,Dev,Amazon,t3.micro,10.0.11.16,subnet-07ad56717f7d6df74,sg-018551d7207a38477
