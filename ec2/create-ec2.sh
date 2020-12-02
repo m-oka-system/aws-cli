@@ -5,6 +5,7 @@ set -euo pipefail
 SERVER_FILE="server-list.csv"
 IAMROLE_PREFIX="IAMROLE_"
 TENANCY="default" # "default"|"dedicated"|"host"
+KEY_NAME="my-key-pair"
 
 # サーバ一覧のファイルを1行ずつ読み込んで配列へ格納
 mapfile -t SERVER_ARRAY < <(sed 1d $SERVER_FILE | sed '/^#/d')
@@ -29,6 +30,7 @@ for server in "${SERVER_ARRAY[@]}"; do
   # test $OS == "Linux" && USER_DATA="init-linux.sh" || USER_DATA="init-windows.ps1"
   case $OS in
     RHEL) USER_DATA="init-rhel.sh" ;;
+    Amazon) USER_DATA="init-amazon.sh" ;;
     Windows) USER_DATA="init-windows.ps1" ;;
   esac
 
@@ -39,7 +41,7 @@ for server in "${SERVER_ARRAY[@]}"; do
     --image-id $AMI_ID \
     --count 1 \
     --instance-type $INSTANCE_TYPE \
-    --key-name "my-key-pair" \
+    --key-name $KEY_NAME \
     --subnet-id $SUBNET_ID \
     --private-ip-address $PRIVATE_IP \
     --security-group-ids $SECURITY_GROUP_ID \

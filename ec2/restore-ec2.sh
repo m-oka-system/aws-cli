@@ -5,6 +5,7 @@ set -euo pipefail
 SERVER_FILE="restore-list.csv"
 IAMROLE_PREFIX="IAMROLE_"
 TENANCY="default" # "default"|"dedicated"|"host"
+KEY_NAME="my-key-pair"
 
 # サーバ一覧のファイルを1行ずつ読み込んで配列へ格納
 mapfile -t SERVER_ARRAY < <(sed 1d $SERVER_FILE | sed '/^#/d')
@@ -27,6 +28,7 @@ for server in "${SERVER_ARRAY[@]}"; do
 
   case $OS in
     RHEL) USER_DATA="dr-rhel.sh" ;;
+    Amazon) USER_DATA="init-amazon.sh" ;;
     Windows) USER_DATA="dr-windows.ps1" ;;
   esac
 
@@ -43,7 +45,7 @@ for server in "${SERVER_ARRAY[@]}"; do
     --image-id $LATEST_AMI_ID \
     --count 1 \
     --instance-type $INSTANCE_TYPE \
-    --key-name "my-key-pair" \
+    --key-name $KEY_NAME \
     --network-interfaces NetworkInterfaceId=${NETWORK_INTERFACE_ID},DeviceIndex=0 \
     --iam-instance-profile Name=${IAMROLE_PREFIX}${HOST_NAME} \
     --user-data fileb://userdata/${USER_DATA} \
