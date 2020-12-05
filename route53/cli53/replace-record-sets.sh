@@ -34,9 +34,10 @@ aws route53 list-resource-record-sets --hosted-zone-id "$ZONE_ID" > "${EXPORT_DI
 echo "${DOMAIN_NAME} のマッピングファイルに従ってリソースレコードファイルを更新します。"
 for record in "${RECORD_MAPPING_ARRAY[@]}"; do
   # Variables
+  hostname=$(echo "$record" | cut -d , -f 1)
   before=$(echo "$record" | cut -d , -f 2)
   after=$(echo "$record" | cut -d , -f 3)
-  sed -i -e "s/${before}/${after}/" "${EXPORT_DIR}"/"${AWS_DEFAULT_REGION}"_"${DOMAIN_NAME}"_"${ZONE_ID}"_after.txt
+  sed -i -e "/^${hostname}/s/${before}/${after}/" "${EXPORT_DIR}"/"${AWS_DEFAULT_REGION}"_"${DOMAIN_NAME}"_"${ZONE_ID}"_after.txt
 done
 
 # ホストゾーンに変更後のファイルをインポート
