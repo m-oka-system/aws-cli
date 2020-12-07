@@ -1,0 +1,2 @@
+DbInstanceIdentifier,DbInstanceClass,VpcSecurityGroups,DbEngine,MultAz
+mysql01,db.t3.medium,sg-0bb01f7e64e95643a,mysql,false

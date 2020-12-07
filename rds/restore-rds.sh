@@ -40,7 +40,7 @@ esac
 
 # 確認メッセージ
 for array in "${SERVER_ARRAY[@]}"; do echo $array; done
-read -r -p "上記サーバの名前を変更します。よろしいですか？ (y/N): " yn
+read -r -p "上記サーバを作成します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
 function main() {
@@ -48,20 +48,49 @@ function main() {
   . ${SCRIPT_DIR}/lib/common
   . ${SCRIPT_DIR}/lib/rds
 
-  for i in "${SERVER_ARRAY[@]}"; do
+  # 共通変数
+  ACCOUNT_ID=$(get_account_id)
 
+  for i in "${SERVER_ARRAY[@]}"; do
     # 変数に格納
     DB_INSTANCE_IDENTIFIER=$(echo $i | cut -d , -f 1)
+    DB_INSTANCE_CLASS=$(echo $i | cut -d , -f 2)
+    VPC_SECURITY_GROUP_NAME=$(echo $i | cut -d , -f 3)
+    DB_ENGINE=$(echo $i | cut -d , -f 4)
+    MULTI_AZ=$(echo $i | cut -d , -f 5)
     NEW_DB_INSTANCE_IDENTIFIER=${DB_INSTANCE_IDENTIFIER}-renamed
 
-    echo "---${DB_INSTANCE_IDENTIFIER} --> ${NEW_DB_INSTANCE_IDENTIFIER} start---"
+    case "$DB_ENGINE" in
+      sqlserver*) LOGS_EXPORTS='"error"' ;;
+      mysql) LOGS_EXPORTS='"error","general","slowquery"' ;;
+      oracle*) LOGS_EXPORTS='"error","general","audit","slowquery"' ;;
+    esac
 
-    # DBインスタンスの名前を変更
-    rename_db_instance_name
+    echo "---${DB_INSTANCE_IDENTIFIER} start---"
 
-    echo "---${DB_INSTANCE_IDENTIFIER} end---"
+    # 最新のスナップショットを取得
+    LATEST_DB_SNAPSHOT_ARN=$(get_latest_db_snapshot)
+
+    # DBインスタンスをリストア
+    case "$FLAG" in
+      "dr")
+        case "$MULTI_AZ" in
+          "true") restore_db_instance_multi ;;
+          "false") restore_db_instance_single ;;
+        esac
+      ;;
+      "az") restore_db_instance_single_to_point_in_time ;;
+    esac
+
+    # 拡張モニタリングを有効化
+    enable_enhanced_monitoring
+
+    # パフォーマンスインサイトを有効化
+    enable_performance_insight
 
   done
+
+  echo "---${DB_INSTANCE_IDENTIFIER} end---"
 
 }
 

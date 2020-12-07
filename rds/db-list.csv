@@ -1,2 +1,2 @@
 DbInstanceIdentifier,DbInstanceClass,VpcSecurityGroups,StorageType,AllocatedStorage,DbEngine,DbEngineVersion,Port,DbName,DbUserName,DbUserPassword,MultAz
-mysql01,db.t3.medium,sg-0bb01f7e64e95643a,gp2,20,mysql,8.0.20,3306,MyDatabase,root,My5up3rStr0ngPaSw0rd!,false
+mysql01,db.t3.micro,sg-0bb01f7e64e95643a,gp2,20,mysql,8.0.20,3306,MyDatabase,root,My5up3rStr0ngPaSw0rd!,false

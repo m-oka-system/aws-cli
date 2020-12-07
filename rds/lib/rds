@@ -1,0 +1,196 @@
+#!/bin/bash
+
+function create_db_instance_single_az() {
+  get_datetime
+  aws rds create-db-instance \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --db-instance-class $DB_INSTANCE_CLASS \
+    --availability-zone ${AWS_DEFAULT_REGION}a \
+    --no-multi-az \
+    --db-subnet-group-name db-subnet \
+    --db-parameter-group-name default.mysql8.0 \
+    --option-group-name default:mysql-8-0 \
+    --vpc-security-group-ids $VPC_SECURITY_GROUP_NAME \
+    --storage-type $STORAGE_TYPE \
+    --allocated-storage $ALLOCATED_STORAGE \
+    --storage-encrypted \
+    --engine $DB_ENGINE \
+    --engine-version $DB_ENGINE_VERSION \
+    --license-model $LICENSE_MODEL \
+    --db-name $DB_NAME \
+    --port $PORT \
+    --master-username $DB_USER_NAME \
+    --master-user-password $DB_USER_PASSWORD \
+    --no-publicly-accessible \
+    --copy-tags-to-snapshot \
+    --backup-retention-period 2 \
+    --preferred-backup-window "19:00-20:00" \
+    --preferred-maintenance-window "Sat:20:00-Sat:21:00" \
+    --monitoring-interval 60 \
+    --monitoring-role-arn arn:aws:iam::${ACCOUNT_ID}:role/rds-monitoring-role \
+    --enable-cloudwatch-logs-exports ["$LOGS_EXPORTS"] \
+    --no-auto-minor-version-upgrade \
+    --deletion-protection \
+    --tags Key=Name,Value=$DB_INSTANCE_IDENTIFIER Key=evn,Value=dev 2>&1 1>/dev/null
+    #     --enable-performance-insights \
+    # --performance-insights-retention-period 7 \
+}
+
+function create_db_instance_multi_az() {
+  get_datetime
+  aws rds create-db-instance \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --db-instance-class $DB_INSTANCE_CLASS \
+    --multi-az \
+    --db-subnet-group-name db-subnet \
+    --db-parameter-group-name default.mysql8.0 \
+    --option-group-name default:mysql-8-0 \
+    --vpc-security-group-ids $VPC_SECURITY_GROUP_NAME \
+    --storage-type $STORAGE_TYPE \
+    --allocated-storage $ALLOCATED_STORAGE \
+    --storage-encrypted \
+    --engine $DB_ENGINE \
+    --engine-version $DB_ENGINE_VERSION \
+    --license-model $LICENSE_MODEL \
+    --db-name $DB_NAME \
+    --port $PORT \
+    --master-username $DB_USER_NAME \
+    --master-user-password $DB_USER_PASSWORD \
+    --no-publicly-accessible \
+    --copy-tags-to-snapshot \
+    --backup-retention-period 2 \
+    --preferred-backup-window "19:00-20:00" \
+    --preferred-maintenance-window "Sat:20:00-Sat:21:00" \
+    --enable-performance-insights \
+    --performance-insights-retention-period 7 \
+    --monitoring-interval 60 \
+    --monitoring-role-arn arn:aws:iam::${ACCOUNT_ID}:role/rds-monitoring-role \
+    --enable-cloudwatch-logs-exports ["$LOGS_EXPORTS"] \
+    --no-auto-minor-version-upgrade \
+    --deletion-protection \
+    --tags Key=Name,Value=$DB_INSTANCE_IDENTIFIER Key=evn,Value=dev 2>&1 1>/dev/null
+}
+
+function disable_delete_protection () {
+  get_datetime
+  aws rds modify-db-instance \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --no-deletion-protection 2>&1 1>/dev/null
+}
+
+function delete_db_instance () {
+  get_datetime
+  aws rds delete-db-instance \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --skip-final-snapshot \
+    --delete-automated-backups 2>&1 1>/dev/null
+}
+
+function get_db_instance () {
+  aws rds describe-db-instances \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --output json
+}
+
+function get_db_instance_arn () {
+  aws rds describe-db-instances \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --query "DBInstances[].DBInstanceArn" \
+    --output text
+}
+
+function list_db_instance_tags () {
+  aws rds list-tags-for-resource \
+  --region $REGION \
+  --resource-name $DB_INSTANCE_ARN \
+  --query "TagList[] | sort_by(@, &Key)" \
+  --output json
+}
+
+function rename_db_instance_name () {
+  get_datetime
+  aws rds modify-db-instance \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --new-db-instance-identifier $NEW_DB_INSTANCE_IDENTIFIER \
+    --apply-immediately 2>&1 1>/dev/null
+}
+
+function restore_db_instance_single () {
+  get_datetime
+  aws rds restore-db-instance-from-db-snapshot \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --db-snapshot-identifier $LATEST_DB_SNAPSHOT_ARN \
+    --db-instance-class $DB_INSTANCE_CLASS \
+    --availability-zone ${REGION}a \
+    --db-subnet-group-name db-subnet \
+    --db-parameter-group-name default.mysql8.0 \
+    --option-group-name default:mysql-8-0 \
+    --vpc-security-group-ids $VPC_SECURITY_GROUP_NAME \
+    --no-multi-az \
+    --no-publicly-accessible \
+    --copy-tags-to-snapshot \
+    --no-auto-minor-version-upgrade \
+    --enable-cloudwatch-logs-exports ["$LOGS_EXPORTS"] 2>&1 1>/dev/null
+}
+
+function restore_db_instance_single_to_point_in_time () {
+  get_datetime
+  aws rds restore-db-instance-to-point-in-time \
+    --region $REGION \
+    --source-db-instance-identifier $NEW_DB_INSTANCE_IDENTIFIER \
+    --target-db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --use-latest-restorable-time \
+    --db-instance-class $DB_INSTANCE_CLASS \
+    --availability-zone ${REGION}a \
+    --db-subnet-group-name db-subnet \
+    --db-parameter-group-name default.mysql8.0 \
+    --option-group-name default:mysql-8-0 \
+    --vpc-security-group-ids $VPC_SECURITY_GROUP_NAME \
+    --no-multi-az \
+    --no-publicly-accessible \
+    --copy-tags-to-snapshot \
+    --no-auto-minor-version-upgrade \
+    --enable-cloudwatch-logs-exports ["$LOGS_EXPORTS"] \
+    --deletion-protection 2>&1 1> /dev/null
+}
+
+function get_latest_db_snapshot () {
+  aws rds describe-db-snapshots \
+  --region $REGION \
+  --filters Name=db-instance-id,Values=$DB_INSTANCE_IDENTIFIER \
+  --query 'DBSnapshots[?Status==`available`] | sort_by(@, &SnapshotCreateTime)[-1].DBSnapshotArn' \
+  --output text
+}
+
+function get_current_availability_zone () {
+  get_datetime
+  aws rds describe-db-instances \
+    --region $REGION \
+    --db-instance-identifier $OLD_DB_INSTANCE_IDENTIFIER \
+    --query "DBInstances[].AvailabilityZone" \
+    --output text
+}
+
+function enable_enhanced_monitoring () {
+  get_datetime
+  aws rds modify-db-instance \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --monitoring-interval 60 \
+    --monitoring-role-arn arn:aws:iam::${ACCOUNT_ID}:role/rds-monitoring-role 2>&1 1>/dev/null
+}
+
+function enable_performance_insight () {
+  get_datetime
+  aws rds modify-db-instance \
+    --region $REGION \
+    --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
+    --enable-performance-insight \
+    --performance-insights-retention-period 7 2>&1 1>/dev/null
+}
