@@ -1,0 +1,32 @@
+#!/bin/bash
+
+function get_instance_id () {
+  aws ec2 describe-instances \
+    --filters "Name=tag:Name,Values=${HOST_NAME}" \
+    --query "Reservations[].Instances[].InstanceId" \
+    --output text
+}
+
+function get_instance_id_with_state () {
+  aws ec2 describe-instances \
+    --filters "Name=tag:Name,Values=${HOST_NAME}" "Name=instance-state-name,Values=${INSTANCE_STATE_NAME}" \
+    --query "Reservations[].Instances[].InstanceId" \
+    --output text
+}
+
+function start_ec2 () {
+  aws ec2 start-instances \
+    --instance-ids $INSTANCE_ID > /dev/null 2>&1
+}
+
+function stop_ec2 () {
+  aws ec2 stop-instances \
+    --instance-ids $INSTANCE_ID > /dev/null 2>&1
+}
+
+function get_ec2 () {
+  aws ec2 describe-instances \
+    --instance-ids $INSTANCE_ID \
+    --query "Reservations[].Instances[].[InstanceId,InstanceType,LaunchTime,PrivateIpAddress,State.Name]" \
+    --output table
+}
