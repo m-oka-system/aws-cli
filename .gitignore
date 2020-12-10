@@ -3,3 +3,4 @@
 /route53/cli53/export
 /route53/cli53/*.log
 /acm/certdir/
+export/
