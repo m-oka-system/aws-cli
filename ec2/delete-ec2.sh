@@ -2,6 +2,7 @@
 set -euo pipefail
 
 # 変数
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SERVER_ARRAY=("$@")
 
 if [ "$#" -eq 0 ]; then
@@ -10,29 +11,40 @@ if [ "$#" -eq 0 ]; then
 fi
 
 # 確認メッセージ
-echo "Region:${AWS_DEFAULT_REGION}"
-echo "HostName:${SERVER_ARRAY[@]}"
+echo "Region: ${AWS_DEFAULT_REGION}"
+echo "HostName:" "${SERVER_ARRAY[@]}"
 read -r -p "上記サーバを削除します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
 # メイン処理
-for server in "${SERVER_ARRAY[@]}"; do
-  HOST_NAME=$server
+function main() {
 
-  echo "${HOST_NAME} の削除を開始します。"
+  . ${SCRIPT_DIR}/lib/ec2
 
-  # インスタンスIDを取得
-  INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$HOST_NAME" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].InstanceId" --output text)
-  if [ x = x$INSTANCE_ID ]; then
-    echo "インスタンスIDの取得に失敗しました。処理を終了します"
-    exit 1
-  fi
+  for server in "${SERVER_ARRAY[@]}"; do
+    HOST_NAME=$server
+    INSTANCE_STATE_NAME="running"
 
-  # 削除保護を無効化
-  aws ec2 modify-instance-attribute --instance-id $INSTANCE_ID --no-disable-api-termination > /dev/null 2>&1
+    echo "${HOST_NAME} の削除を開始します。"
 
-  # EC2インスタンスを削除
-  aws ec2 terminate-instances --instance-ids $INSTANCE_ID > /dev/null 2>&1
+    # インスタンスIDを取得
+    INSTANCE_ID=$(get_instance_id_with_state)
+    if [ x = x$INSTANCE_ID ]; then
+      echo "インスタンスIDの取得に失敗しました。処理を終了します"
+      exit 1
+    fi
 
-  echo "${HOST_NAME} の削除が終了しました。"
-done
+    # 削除保護を無効化
+    disable_delete_protection
+
+    # EC2インスタンスを削除
+    delete_ec2
+
+    echo "${HOST_NAME} の削除が終了しました。"
+  done
+
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi
