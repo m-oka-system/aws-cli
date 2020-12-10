@@ -29,7 +29,7 @@ for server in "${SERVER_ARRAY[@]}"; do
   SECURITY_GROUP_ID=$(echo $server | cut -d , -f 8)
   # test $OS == "Linux" && USER_DATA="init-linux.sh" || USER_DATA="init-windows.ps1"
   case $OS in
-    RHEL) USER_DATA="init-rhel.sh" ;;
+    RHEL|CentOS) USER_DATA="init-rhel.sh" ;;
     Amazon) USER_DATA="init-amazon.sh" ;;
     Windows) USER_DATA="init-windows.ps1" ;;
   esac
@@ -60,7 +60,7 @@ for server in "${SERVER_ARRAY[@]}"; do
   NETWORK_INTERFACE_IDS=$(aws ec2 describe-instances --instance-id $INSTANCE_ID --query Reservations[0].Instances[0].NetworkInterfaces[].NetworkInterfaceId --output text)
 
   {
-  aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOST_NAME Key=Env,Value=$ENVIRONMENT
+  aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOST_NAME Key=Env,Value=$ENVIRONMENT Key=OS,Value=$OS
   aws ec2 create-tags --resources $VOLUME_IDS --tags Key=Name,Value=${HOST_NAME}_DATA
   aws ec2 create-tags --resources $ROOT_VOLUME_ID --tags Key=Name,Value=${HOST_NAME}_ROOT
   aws ec2 create-tags --resources $NETWORK_INTERFACE_IDS --tags Key=Name,Value=${HOST_NAME}_ENI
