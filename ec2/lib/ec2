@@ -30,3 +30,14 @@ function get_ec2 () {
     --query "Reservations[].Instances[].[InstanceId,InstanceType,LaunchTime,PrivateIpAddress,State.Name]" \
     --output table
 }
+
+function disable_delete_protection () {
+  aws ec2 modify-instance-attribute \
+    --instance-id $INSTANCE_ID \
+    --no-disable-api-termination > /dev/null 2>&1
+}
+
+function delete_ec2 () {
+  aws ec2 terminate-instances \
+    --instance-ids $INSTANCE_ID > /dev/null 2>&1
+}
