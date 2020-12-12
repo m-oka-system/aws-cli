@@ -1,5 +1,5 @@
-AmiId,HostName,Env,OS,InstanceType,PrivateIp
-ami-00d41323e6dee6732,RHEL7.7,Dev,RHEL,t3.micro,10.1.11.11
-ami-0497182cf8f6f67d1,RHEL8.3,Dev,RHEL,t3.micro,10.1.11.12
-#ami-0119d7d47f3b13adb,SUSE15,Dev,SUSE,t3.micro,10.1.11.13
-#ami-04882bf72ff913721,SUSE12,Dev,SUSE,t3.micro,10.1.11.14
+HostName,Env,OS,InstanceType,PrivateIp
+RHEL7.7,Dev,RHEL,t3.micro,10.0.11.11
+#RHEL8.3,Dev,RHEL,t3.micro,10.1.11.12
+#SUSE15,Dev,SUSE,t3.micro,10.1.11.13
+#SUSE12,Dev,SUSE,t3.micro,10.1.11.14

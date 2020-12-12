@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Get
 function get_instance_id () {
   aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=${HOST_NAME}" \
@@ -14,6 +15,92 @@ function get_instance_id_with_state () {
     --output text
 }
 
+function get_ec2 () {
+  aws ec2 describe-instances \
+    --instance-ids $INSTANCE_ID \
+    --query "Reservations[].Instances[].[InstanceId,InstanceType,LaunchTime,PrivateIpAddress,State.Name]" \
+    --output table
+}
+
+function get_latest_ami () {
+  aws ec2 describe-images \
+    --owner self \
+    --filter "Name=tag:Name,Values=$HOST_NAME*" \
+    --query "sort_by(Images, &CreationDate)[-1].ImageId" \
+    --output text
+}
+
+function get_network_interface_id_by_private_ip () {
+  aws ec2 describe-network-interfaces \
+    --filters Name=addresses.private-ip-address,Values=$PRIVATE_IP \
+    --query "NetworkInterfaces[].NetworkInterfaceId" \
+    --output text
+}
+
+function get_network_interface_ids () {
+  aws ec2 describe-instances \
+    --instance-id $INSTANCE_ID \
+    --query "Reservations[0].Instances[0].NetworkInterfaces[].NetworkInterfaceId" \
+    --output text
+}
+
+function get_root_volume_id () {
+  aws ec2 describe-instances \
+    --instance-id $INSTANCE_ID \
+    --query "Reservations[0].Instances[0].BlockDeviceMappings[0].Ebs.VolumeId" \
+    --output text
+}
+
+function get_volume_ids () {
+  aws ec2 describe-instances \
+    --instance-id $INSTANCE_ID \
+    --query "Reservations[0].Instances[0].BlockDeviceMappings[].Ebs.VolumeId" \
+    --output text
+}
+
+# Create
+function create_ec2 () {
+  aws ec2 run-instances \
+    --image-id $AMI_ID \
+    --count 1 \
+    --instance-type $INSTANCE_TYPE \
+    --key-name $KEY_NAME \
+    --network-interfaces NetworkInterfaceId=${NETWORK_INTERFACE_ID},DeviceIndex=0 \
+    --block-device-mappings file://volume/${HOST_NAME}.json \
+    --iam-instance-profile Name=${IAM_INSTANCE_PROFILE} \
+    --user-data file://userdata/${USER_DATA} \
+    --disable-api-termination \
+    --placement Tenancy=${TENANCY} \
+    --capacity-reservation-specification CapacityReservationPreference=none \
+    --query "Instances[].InstanceId" --output text
+}
+
+function restore_ec2 () {
+  aws ec2 run-instances \
+    --image-id $LATEST_AMI_ID \
+    --count 1 \
+    --instance-type $INSTANCE_TYPE \
+    --key-name $KEY_NAME \
+    --network-interfaces NetworkInterfaceId=${NETWORK_INTERFACE_ID},DeviceIndex=0 \
+    --iam-instance-profile Name=${IAM_INSTANCE_PROFILE} \
+    --user-data fileb://userdata/${USER_DATA} \
+    --disable-api-termination \
+    --placement Tenancy=${TENANCY} \
+    --capacity-reservation-specification CapacityReservationPreference=none \
+    --query "Instances[].InstanceId" \
+    --output text
+}
+
+function create_network_interface () {
+  aws ec2 create-network-interface \
+    --private-ip-address $PRIVATE_IP \
+    --subnet-id $SUBNET_ID \
+    --groups $SECURITY_GROUP_ID \
+    --query "NetworkInterface.NetworkInterfaceId" \
+    --output text
+}
+
+# Start/Stop
 function start_ec2 () {
   aws ec2 start-instances \
     --instance-ids $INSTANCE_ID > /dev/null 2>&1
@@ -24,13 +111,8 @@ function stop_ec2 () {
     --instance-ids $INSTANCE_ID > /dev/null 2>&1
 }
 
-function get_ec2 () {
-  aws ec2 describe-instances \
-    --instance-ids $INSTANCE_ID \
-    --query "Reservations[].Instances[].[InstanceId,InstanceType,LaunchTime,PrivateIpAddress,State.Name]" \
-    --output table
-}
 
+# Delete
 function disable_delete_protection () {
   aws ec2 modify-instance-attribute \
     --instance-id $INSTANCE_ID \

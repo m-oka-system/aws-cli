@@ -1,16 +1,13 @@
 AmiId,HostName,Env,OS,InstanceType,PrivateIp,SubnetId,SecurityGroupId
-#ami-04a12c0fbaeac005e,RHEL01,Dev,RHEL,t2.micro,10.0.11.11,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
-#ami-097e78d10c4722996,RHEL01,Dev,RHEL,t2.micro,10.1.11.12,subnet-0adb80099bbb7022d,sg-02b97389ac8316955
-#ami-0db8eed5fcd04986b,WINSV02,Dev,Windows,t2.micro,10.0.11.12,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
-#ami-06a23b8728d57155b,WINSV03,Dev,Windows,t3.medium,10.0.11.13,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
-#ami-06a23b8728d57155b,WINSV04,Dev,Windows,t2.micro,10.0.11.14,subnet-07ad56717f7d6df74,sg-0bb01f7e64e95643a
-#ami-04a12c0fbaeac005e,RHEL01,Dev,RHEL,t2.micro,10.0.21.11,subnet-002e32ddce1eeda13,sg-0bb01f7e64e95643a
-#ami-0db8eed5fcd04986b,WINSV02,Dev,Windows,t2.micro,10.0.21.12,subnet-002e32ddce1eeda13,sg-0bb01f7e64e95643a
-#ami-06a23b8728d57155b,WINSV03,Dev,Windows,t3.medium,10.0.21.13,subnet-002e32ddce1eeda13,sg-0bb01f7e64e95643a
-#ami-06a23b8728d57155b,WINSV04,Dev,Windows,t2.micro,10.0.21.14,subnet-002e32ddce1eeda13,sg-0bb01f7e64e95643a
-ami-0b355f24363d9f357,RHEL7.7,Dev,RHEL,t2.micro,10.0.11.11,subnet-07ad56717f7d6df74,sg-018551d7207a38477
-#ami-0dc185deadd3ac449,RHEL8.3,Dev,RHEL,t2.micro,10.0.11.12,subnet-07ad56717f7d6df74,sg-018551d7207a38477
-#ami-0119d7d47f3b13adb,SUSE15,Dev,SUSE,t2.micro,10.0.11.13,subnet-07ad56717f7d6df74,sg-018551d7207a38477
-#ami-04882bf72ff913721,SUSE12,Dev,SUSE,t2.micro,10.0.11.14,subnet-07ad56717f7d6df74,sg-018551d7207a38477
-ami-034968955444c1fd9,AmazonLinux01,Dev,Amazon,t2.micro,10.0.11.15,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+ami-04a12c0fbaeac005e,RHEL01,Dev,RHEL7.7,t2.micro,10.0.11.11,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-0db8eed5fcd04986b,WINSV01,Dev,Windows2016,t3.small,10.0.11.21,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-06a23b8728d57155b,WINSV02,Dev,Windows2019,t2.micro,10.0.11.22,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-06a23b8728d57155b,WINSV03,Dev,Windows2019,t2.micro,10.0.11.23,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+# For each OS Version
+#ami-0b355f24363d9f357,RHEL01,Dev,RHEL7.7,t3.small,10.0.11.11,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-0dc185deadd3ac449,RHEL02,Dev,RHEL8.3,t2.micro,10.0.11.19,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-0119d7d47f3b13adb,SUSE01,Dev,SUSE15,t2.micro,10.0.11.13,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-04882bf72ff913721,SUSE02,Dev,SUSE12,t2.micro,10.0.11.14,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-034968955444c1fd9,AmazonLinux01,Dev,Amazon,t2.micro,10.0.11.15,subnet-07ad56717f7d6df74,sg-018551d7207a38477
 #ami-034968955444c1fd9,AmazonLinux02,Dev,Amazon,t2.micro,10.0.11.16,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-06a46da680048c8aem,CentOS01,Dev,CentOS7,t2.micro,10.0.11.17,subnet-07ad56717f7d6df74,sg-018551d7207a38477
