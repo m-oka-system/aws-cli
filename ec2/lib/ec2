@@ -22,13 +22,30 @@ function get_ec2 () {
     --output table
 }
 
-function get_latest_ami () {
+function get_latest_ami_id () {
   aws ec2 describe-images \
     --owner self \
     --filter "Name=tag:Name,Values=$HOST_NAME*" \
     --query "sort_by(Images, &CreationDate)[-1].ImageId" \
     --output text
 }
+
+function get_ami_tag_keys () {
+  aws ec2 describe-images \
+    --owner self \
+    --image-id $1 \
+    --query 'sort_by(Images[].Tags[], &Key)[].Key' \
+    --output text
+}
+
+function get_ami_tag_values () {
+  aws ec2 describe-images \
+    --owner self \
+    --image-id $1 \
+    --query 'sort_by(Images[].Tags[], &Key)[].Value' \
+    --output text
+}
+
 
 function get_network_interface_id_by_private_ip () {
   aws ec2 describe-network-interfaces \
@@ -99,6 +116,25 @@ function create_network_interface () {
     --query "NetworkInterface.NetworkInterfaceId" \
     --output text
 }
+
+function create_image () {
+  aws ec2 create-image \
+    --instance-id $INSTANCE_ID \
+    --name $IMAGE_NAME \
+    --query ImageId \
+    --output text
+}
+
+function copy_image () {
+  aws ec2 copy-image \
+    --region $DST_REGION \
+    --source-region $AWS_DEFAULT_REGION \
+    --name $COPIED_IMAGE_NAME \
+    --description "Copied $LATEST_AMI_ID from $DST_REGION" \
+    --source-image-id $LATEST_AMI_ID \
+    --output text
+}
+
 
 # Start/Stop
 function start_ec2 () {
