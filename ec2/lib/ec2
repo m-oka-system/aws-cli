@@ -11,7 +11,7 @@ function get_instance_id () {
 function get_instance_id_with_state () {
   aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=${HOST_NAME}" "Name=instance-state-name,Values=${INSTANCE_STATE_NAME}" \
-    --query "Reservations[].Instances[].InstanceId" \
+    --query "Reservations[0].Instances[].InstanceId" \
     --output text
 }
 
@@ -112,7 +112,7 @@ function create_network_interface () {
   aws ec2 create-network-interface \
     --private-ip-address $PRIVATE_IP \
     --subnet-id $SUBNET_ID \
-    --groups $SECURITY_GROUP_ID \
+    --groups $SECURITY_GROUP_IDS \
     --query "NetworkInterface.NetworkInterfaceId" \
     --output text
 }
