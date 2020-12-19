@@ -32,13 +32,13 @@ function main() {
     PRIVATE_IP=$(echo $server | cut -d , -f 5)
 
     case $OS in
-      RHEL) USER_DATA="dr-rhel.sh" ;;
-      Amazon) USER_DATA="init-amazon.sh" ;;
-      Windows) USER_DATA="dr-windows.ps1" ;;
+      RHEL*) USER_DATA="dr-rhel.sh" ;;
+      Amazon*) USER_DATA="init-amazon.sh" ;;
+      Windows*) USER_DATA="dr-windows.ps1" ;;
     esac
 
     # 最新のAMIを取得
-    LATEST_AMI_ID=$(get_latest_ami)
+    LATEST_AMI_ID=$(get_latest_ami_id)
     if [ -z "$LATEST_AMI_ID" ]; then
       echo "AMIIDの取得に失敗しました。処理を終了します。"
       exit 1
