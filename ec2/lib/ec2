@@ -75,6 +75,13 @@ function get_volume_ids () {
     --output text
 }
 
+function get_security_group_id_by_name_tag () {
+  aws ec2 describe-security-groups \
+    --filters "Name=tag:Name,Values=${SECURITY_GROUP_NAME}" \
+    --query "SecurityGroups[].GroupId" \
+    --output text
+}
+
 # Create
 function create_ec2 () {
   aws ec2 run-instances \
@@ -106,6 +113,22 @@ function restore_ec2 () {
     --capacity-reservation-specification CapacityReservationPreference=none \
     --query "Instances[].InstanceId" \
     --output text
+}
+
+function create_security_group () {
+  aws ec2 create-security-group \
+    --description "Created by AWS CLI" \
+    --vpc-id $VPC_ID \
+    --group-name $SECURITY_GROUP_NAME \
+    --output text
+}
+
+function create_security_group_ingress_rule_by_cidr () {
+  aws ec2 authorize-security-group-ingress \
+    --group-id $SECURITY_GROUP_ID \
+    --protocol $PROTOCOL \
+    --port $PORT \
+    --cidr $CIDR
 }
 
 function create_network_interface () {
