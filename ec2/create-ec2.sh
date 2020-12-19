@@ -32,7 +32,7 @@ function main() {
     INSTANCE_TYPE=$(echo $server | cut -d , -f 5)
     PRIVATE_IP=$(echo $server | cut -d , -f 6)
     SUBNET_ID=$(echo $server | cut -d , -f 7)
-    SECURITY_GROUP_ID=$(echo $server | cut -d , -f 8)
+    SECURITY_GROUP_IDS=$(echo $server | awk -F, '{for (i = 8; i <= NF; i++) print $i;}')
 
     case $OS in
       RHEL*|CentOS*) USER_DATA="init-rhel.sh" ;;
