@@ -4,3 +4,4 @@
 /route53/cli53/*.log
 /acm/certdir/
 export/
+.DS_Store
