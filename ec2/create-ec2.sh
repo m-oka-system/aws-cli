@@ -36,6 +36,7 @@ function main() {
 
     case $OS in
       RHEL*|CentOS*) USER_DATA="init-rhel.sh" ;;
+      UBUNTU*) USER_DATA="init-ubuntu.sh" ;;
       Amazon*) USER_DATA="init-amazon.sh" ;;
       Windows*) USER_DATA="init-windows.ps1" ;;
     esac

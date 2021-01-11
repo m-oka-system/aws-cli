@@ -13,4 +13,7 @@ AmiId,HostName,Env,OS,InstanceType,PrivateIp,SubnetId,SecurityGroupIds
 #ami-034968955444c1fd9,AmazonLinux01,Dev,Amazon,t2.micro,10.0.11.15,subnet-07ad56717f7d6df74,sg-018551d7207a38477
 #ami-034968955444c1fd9,AmazonLinux02,Dev,Amazon,t2.micro,10.0.11.16,subnet-07ad56717f7d6df74,sg-018551d7207a38477
 #ami-06a46da680048c8aem,CentOS01,Dev,CentOS7,t2.micro,10.0.11.17,subnet-07ad56717f7d6df74,sg-018551d7207a38477
-ami-0f2dd5fc989207c82,UBUNTU01,Dev,UBUNTU20,t2.micro,10.0.11.18,subnet-07ad56717f7d6df74,sg-018551d7207a38477
+#ami-0f2dd5fc989207c82,UBUNTU01,Dev,UBUNTU20,t2.micro,10.0.11.18,subnet-0f2667fd5467c6287,sg-00861a1ded3a4bf73
+#ami-0f2dd5fc989207c82,UBUNTU02,Dev,UBUNTU21,t2.micro,10.0.21.18,subnet-0c2083a6f28de82b0,sg-0f8854b87f77ac093
+ami-034968955444c1fd9,AmazonLinux01,Dev,Amazon,t2.micro,10.0.11.15,subnet-0f2667fd5467c6287,sg-00861a1ded3a4bf73
+ami-034968955444c1fd9,AmazonLinux02,Dev,Amazon,t2.micro,10.0.21.15,subnet-0c2083a6f28de82b0,sg-0f8854b87f77ac093
