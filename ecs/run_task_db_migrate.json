@@ -1,0 +1,8 @@
+{
+  "containerOverrides": [
+    {
+      "name": "web",
+      "command": ["bundle", "exec", "rails", "db:migrate"]
+    }
+  ]
+}

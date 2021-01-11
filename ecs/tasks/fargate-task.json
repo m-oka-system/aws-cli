@@ -1,0 +1,57 @@
+{
+  "executionRoleArn": "arn:aws:iam::834829755694:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/rails-app",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 3000,
+          "protocol": "tcp",
+          "containerPort": 3000
+        }
+      ],
+      "command": [
+        "rails",
+        "s",
+        "-p",
+        "3000",
+        "-b",
+        "0.0.0.0"
+      ],
+      "cpu": 0,
+      "secrets": [
+        {
+          "name": "RDS_HOSTNAME",
+          "valueFrom": "ecs-db-hostname"
+        },
+        {
+          "name": "RDS_PASSWORD",
+          "valueFrom": "ecs-db-password"
+        }
+      ],
+      "mountPoints": [],
+      "workingDirectory": "/rails-app",
+      "volumesFrom": [],
+      "image": "834829755694.dkr.ecr.ap-northeast-1.amazonaws.com/rails-app",
+      "essential": true,
+      "name": "web"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": "512",
+  "taskRoleArn": "arn:aws:iam::834829755694:role/ecsTaskExecutionRole",
+  "family": "rails-app",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "volumes": []
+}
