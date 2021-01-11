@@ -16,8 +16,8 @@ case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
 function main() {
 
-  . ${SCRIPT_DIR}/lib/get_datetime
-  . ${SCRIPT_DIR}/lib/create_db_instance_single_az
+  . ${SCRIPT_DIR}/lib/common
+  . ${SCRIPT_DIR}/lib/rds
 
   for i in "${SERVER_ARRAY[@]}"; do
     # 変数に格納
