@@ -11,7 +11,8 @@ SECURITY_GROUP_IDS=("sg-00861a1ded3a4bf73")
 
 # 確認メッセージ
 echo "Region:${AWS_DEFAULT_REGION}"
-read -r -p "サービスを作成します。よろしいですか？ (y/N): " yn
+echo $SERVICE_NAME
+read -r -p "上記サービスを作成します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
 
 # メイン処理
