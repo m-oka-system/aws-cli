@@ -23,20 +23,7 @@ if [[ "$FLAG" != "dr" && "$FLAG" != "az" ]]; then
 fi
 
 # サーバ一覧のファイルを1行ずつ読み込んで配列へ格納
-case "$REGION" in
-  ap-northeast-1)
-    case "$FLAG" in
-      "dr") mapfile -t SERVER_ARRAY < <(sed 1d ${SCRIPT_DIR}/${FLAG}/rds-${REGION}-${FLAG}.csv | sed '/^#/d') ;;
-      "az") mapfile -t SERVER_ARRAY < <(sed 1d ${SCRIPT_DIR}/${FLAG}/rds-${REGION}-${FLAG}.csv | sed '/^#/d') ;;
-    esac
-  ;;
-  ap-southeast-1)
-    case "$FLAG" in
-      "dr") mapfile -t SERVER_ARRAY < <(sed 1d ${SCRIPT_DIR}/${FLAG}/rds-${REGION}-${FLAG}.csv | sed '/^#/d') ;;
-      "az") mapfile -t SERVER_ARRAY < <(sed 1d ${SCRIPT_DIR}/${FLAG}/rds-${REGION}-${FLAG}.csv | sed '/^#/d') ;;
-    esac
-  ;;
-esac
+mapfile -t SERVER_ARRAY < <(sed 1d ${SCRIPT_DIR}/${FLAG}/rds-${REGION}-${FLAG}.csv | sed '/^#/d')
 
 # 確認メッセージ
 for array in "${SERVER_ARRAY[@]}"; do echo $array; done
