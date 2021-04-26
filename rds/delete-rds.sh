@@ -13,7 +13,7 @@ if [[ "$REGION" != "ap-northeast-1" && "$REGION" != "ap-southeast-1" ]]; then
 fi
 
 # 確認メッセージ
-echo "Region:${AWS_DEFAULT_REGION}"
+echo "Region:${REGION}"
 echo "${@:2}"
 read -r -p "上記サーバを削除します。よろしいですか？ (y/N): " yn
 case "$yn" in [yY]*) ;; *) echo "処理を終了します." ; exit ;; esac
